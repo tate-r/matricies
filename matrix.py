@@ -3,31 +3,26 @@ try:
         import matplotlib.pyplot as plot
 except ImportError:
         print("matplotlib for python 3.5 has not been installed. Try 'sudo pip3 install matplotlib'")
-        
-def begin_plot():
-        global points
-        points=[]
 
-def reset():
-        global points
-        points=[]
+class Plotter:
+        def plot(self,*args):
+#               inputs=[p1,p2,p3,p4,p5]
+                plt.xlabel('X axis')
+                plt.ylabel('Y axis')
+                self.points=[]
+                for i in args:
+                        if i != None:
+                                if type(i) == list or type(i) == tuple:
+                                        self.points.append(list(i))
+                                elif type(i) == type(Vector([0,0])):
+                                        self.points.append(i.coords)
+                                else:
+                                        raise TypeError
+                for p in range(len(self.points)):
+                        plt.plot([0,self.points[p][0]],[0,self.points[p][1]],marker='o')
+                plt.show()
 
-def plot(p1,p2=None,p3=None,p4=None,p5=None):
-        inputs=[p1,p2,p3,p4,p5]
-        global points
-        plt.xlabel('X axis')
-        plt.ylabel('Y axis')
-        for i in inputs:
-                if i != None:
-                        if type(i) == list or type(i) == tuple:
-                                points.append(list(i))
-                        elif type(i) == type(Vector([0,0])):
-                                points.append(i.coords)
-                        else:
-                                raise TypeError
-        for p in range(len(points)):
-                plt.plot([0,points[p][0]],[0,points[p][1]],marker='o')
-        plt.show()
+plotter=Plotter()
 
 class Vector:
         def __init__(self,pts):
