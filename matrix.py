@@ -33,6 +33,8 @@ class Vector:
                 return self.coords
         def __str__(self):
                 return 'vector '+str(self.coords)+' in dimention '+self.dim
+        def __repr__(self):
+                return 'vector '+str(self.coords)+' in dimention '+self.dim
         def __add__(self,other):
               if type(other)==type(self):
                    if other.type==self.type:
@@ -124,6 +126,9 @@ class Matrix:
                         rval.append(x)
                 return Vector(rval)
         def __str__(self):
+                self.show()
+                return ''
+        def __repr__(self):
                 self.show()
                 return ''
         def __getitem__(self,index1):
