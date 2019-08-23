@@ -87,7 +87,6 @@ class mul_obj:
 		self.components=[v1,v2]
 		if type(v1)==type(self) and type(v2)==type(Vector([1,1])):
 			val=list(v1)+[v2.coords]
-#			print(val)
 			self.cross_product=self.x_prod(*val)
 			self.components=val
 		elif type(v1)== type(self) and type(v2)== type(self):
@@ -170,13 +169,46 @@ class Matrix:
                         self.cols.append([])
                         for j in range(self.height):
                                 self.cols[i].append(self.matrix[j][i])
-        def show(self):
+                if affine != None:
+                        self.affine_val=True
+                        if type(affine)==list:
+                                if len(affine)!=self.height:
+                                        raise TypeError('affine vector must be the same height as matrix')
+                                        self.affine=Vector(affine)
+                        else:
+                                try:
+                                        if affine.type=='vector':
+                                                self.affine=affine
+                                finally:
+                                        raise TypeError('affine component of a matrix must be a list or Vector object')
+                else:
+                        self.affine=Vector([0]*self.height)
+                        self.affine_val=False
+        def _show(self):
                 for i in range(0,self.height):
                     print(self.matrix[i])
 #                   for i in range(0,h):
 #                               vals=[]
 #                                vals=input("line %s of matrix :" %eval("i+1"))
 #                                if i==0:
+        def show(self):
+                height=self.height
+                width=0
+                affine_width=0
+                for w in self.rows:
+                        if len(str(w)) > width+1:
+                                width=len(str(w))-1
+                for a in self.affine:
+                        if len(str(a)) > affine_width+1:
+                                affine_width=len(str(a))-1
+                grid=[[[' ']*1 for j in range(width+5+affine_width)]*1 for i in range(height)]
+                for h in range(height):
+                        grid[h][0]='['
+                        grid[h][width]=']'
+                        grid[h][width+4]='['
+                        grid[h][width+4+affine_width]=']'
+                print(grid)
+                        
         def apply(self,vector,mod=0):
                 vector=vector.coords
                 if len(vector)!=self.height:
@@ -188,7 +220,10 @@ class Matrix:
                                 y=self.matrix[j][i]
                                 x=x+(y*vector[j])
                         rval.append(x)
-                return Vector(rval)
+                if self.affine_val==False:
+                        return Vector(rval)
+                else:
+                        return Vector(rval)+self.affine
         def __str__(self):
                 self.show()
                 return ''
@@ -196,7 +231,10 @@ class Matrix:
                 self.show()
                 return ''
         def __getitem__(self,index1):
-                return self.matrix[index1]
+                if type(index1)==tuple:
+                        return self.matrix[index1[0]][index1[1]]
+                else:
+                        return self.matrix[index1]
         def __eq__(self,other):
                 if type(other) == type(Matrix([[1,1],[1,1]])):
                         if self.type==other.type:
@@ -374,12 +412,13 @@ def _mul(_m1,_m2):
         return ret
 
 if __name__ == '__main__':
-#        m=Matrix([[Vector([1,0,0]),Vector([0,1,0]),Vector([0,0,1])],[3,4,5],[1,2,3]])
+        m=Matrix([[Vector([1,0,0]),Vector([0,1,0]),Vector([0,0,1])],[3,4,5],[1,2,3]])
 #        print(getBasisVectors(4))
 #        M=mul_obj(Vector([1,2,3,4]),Vector([6,5,5,6]))*Vector([-7,-8,-9,-10])
 #        print(M.cross_product)
 #        M=mul_obj(Vector([1,2,3,4,5]),Vector([3,4,5,6,7]))*mul_obj(Vector([1,2,3,4,5]),Vector([3,4,5,6,7]))
 #        print(M.cross_product)
-        print((Vector([1,5,7])*Vector([6,3,4])).cross_product)
-        print((Vector([1,5,7])*Vector([6,3,4])).dot_product)
-        print((Vector([1,2,3,4])*Vector([6,5,5,6])*Vector([-7,-8,-9,-10])).cross_product)
+#        print((Vector([1,5,7])*Vector([6,3,4])).cross_product)
+#        print((Vector([1,5,7])*Vector([6,3,4])).dot_product)
+#        print((Vector([1,2,3,4])*Vector([6,5,5,6])*Vector([-7,-8,-9,-10])).cross_product)
+        m.show()
